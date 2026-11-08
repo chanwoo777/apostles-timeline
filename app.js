@@ -2829,9 +2829,9 @@ function ymInit(){
 function ntPlace(b){ return ko() ? (b.pk || PN(b.p)) : (b.pn || PN(b.p)); }
 function ntDate(b){ return ko() ? koDate(b.d) : b.d; }
 function ntBuild(){
-  var html = '<div class="nt-legend">' + ["self","inf","trad","unk"].map(function(k){ return '<span class="b-' + k + '"><i></i>' + esc(NTBS[k][ko() ? 1 : 0]) + '</span>'; }).join("") + '</div><div class="ntlist">';
+  var html = '<div class="nt-legend">' + ["self","inf","trad","unk"].map(function(k){ return '<span class="nb-' + k + '"><i></i>' + esc(NTBS[k][ko() ? 1 : 0]) + '</span>'; }).join("") + '</div><div class="ntlist">';
   NT.forEach(function(b){
-    html += '<article class="ntc b-' + b.bs + '" data-ntc="' + b.id + '">' +
+    html += '<article class="ntc nb-' + b.bs + '" data-ntc="' + b.id + '">' +
       '<div class="ntc-top"><span class="ntc-b">' + esc(ko() ? b.k : b.b) + '</span><span class="ntc-d">' + esc(ntDate(b)) + '</span></div>' +
       '<p class="ntc-p">' + esc(ntPlace(b)) + '</p>' +
       '<p class="ntc-a">' + esc(ko() ? b.ak : b.au) + '</p>' +

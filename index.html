@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#E8ECF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#070B1E" media="(prefers-color-scheme: dark)">
+<title>The Apostles on the Way · 길 위의 사도들</title>
+<meta name="description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection, with dated historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Apostles on the Way · 길 위의 사도들">
+<meta property="og:description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection, with dated historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
+<meta property="og:url" content="https://chanwoo777.github.io/apostles-timeline/">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ko_KR">
+<link rel="canonical" href="https://chanwoo777.github.io/apostles-timeline/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<link rel="stylesheet" href="styles.css?v=ad4e3d5f4f">
+<script src="app.js?v=07596f01cc" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="lang-row"><div class="lang-sw" role="group" aria-label="Language · 언어"><button type="button" data-lang="en" lang="en" aria-pressed="true">English</button><button type="button" data-lang="ko" lang="ko" aria-pressed="false">한국어</button></div></div>
+    <div class="top-main">
+      <p class="eyebrow" data-i18n="eyebrow">The Gospels, Acts &amp; the Letters · New International Version · with the historical witnesses</p>
+      <h1 data-i18n="h1">The Apostles on the Way</h1>
+      <p class="lede" data-i18n="lede">Follow the twelve apostles, Matthias and Paul from the day Jesus called them, through the cross and the empty tomb, out to the ends of the earth, and on to the day each was sentenced. Pick an apostle, then walk his road one milestone at a time. Scripture comes from the NIV; after it come the historians and early writers who knew the apostles or their followers, each weighed and dated.</p>
+    </div>
+    <div class="key" aria-label="How to read the road">
+      <div class="key-row"><span class="key-pave" aria-hidden="true"></span><span data-i18n="keyPave">Paved road: recorded in Scripture</span></div>
+      <div class="key-row"><span class="key-hist" aria-hidden="true"></span><span data-i18n="keyHist">Stone marker: event recorded by historians</span></div>
+      <div class="key-row"><span class="key-trail" aria-hidden="true"></span><span data-i18n="keyTrail">Footpath: early church writers and tradition</span></div>
+      <small data-i18n="keySmall">Only Scripture is the Bible. Everything else is marked, dated, and named by its witness, so you can judge how close each one stood to the events.</small>
+    </div>
+  </header>
+
+  <nav class="picker" id="picker" aria-label="Choose an apostle"></nav>
+
+  <section class="journey apc" id="journey" aria-label="Road of the chosen apostle">
+    <div class="profile" id="profile"></div>
+
+    <div class="stage">
+      <section class="map-frame" id="mapFrame" aria-label="Map">
+        <svg class="map" id="map" role="img" aria-label="Map of the Roman world showing the apostle’s journey" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="map-tabs" role="group" aria-label="Map view">
+          <button type="button" id="mStop" aria-pressed="true" data-i18n="mStop">This stop</button>
+          <button type="button" id="mRoad" aria-pressed="false" data-i18n="mRoad">Whole road</button>
+        </div>
+        <div class="map-cap" id="mapCap"></div>
+      </section>
+
+      <article class="detail" id="detail" aria-live="polite">
+        <div class="detail-scroll">
+          <div class="d-meta"><span class="tag" id="dPhase"></span><span class="tag" id="dSrc"></span><span class="d-count" id="dCount"></span></div>
+          <h3 class="d-title" id="dTitle"></h3>
+          <div class="d-sub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="dDate"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span id="dPlace"></span>
+          </div>
+          <p class="d-text" id="dText"></p>
+          <div id="dWithBox"><h4 class="d-h" data-i18n="alsoOn">Also on the road of</h4><div class="with" id="dWith"></div></div>
+          <p class="d-note" id="dNote"></p>
+          <div id="dWitBox"><h4 class="d-h" data-i18n="witHtml">What the witnesses say <span class="d-h2">(in paraphrase)</span></h4><ol class="wits" id="dWits"></ol></div>
+          <p class="d-srcs" id="dSrcs"></p>
+          <div class="links" id="dLinks"></div>
+          <div class="d-nav">
+            <button type="button" class="btn" id="dPrev" data-i18n="prev">← Previous</button>
+            <button type="button" class="btn" id="dNext" data-i18n="next">Next →</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <section class="roadbox" aria-labelledby="rbTitle">
+      <div class="rb-head">
+        <h3 class="rb-title" id="rbTitle"></h3>
+        <span class="rb-hint" data-i18n="rbHint">Scroll or drag along the road · tap a milestone · arrow keys work too</span>
+        <div class="rb-ctrl">
+          <button type="button" class="navbtn" id="prev" aria-label="Previous milestone"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="navbtn" id="next" aria-label="Next milestone"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <div class="road-scroll" id="roadScroll" tabindex="0" role="group" aria-label="Milestones on the road. Use the left and right arrow keys to move.">
+        <div class="track" id="track"></div>
+      </div>
+    </section>
+
+    <section class="deathfile" id="deathFile" aria-labelledby="dfH"></section>
+  </section>
+
+  <section aria-labelledby="ovH">
+    <h2 class="sec-h" id="ovH" data-i18n="ovH">All the Apostles, AD 27–100</h2>
+    <p class="sec-p" data-i18n="ovP">Each line starts when the apostle was called. The pale bar is his time with Jesus, the solid line is what Scripture records after the resurrection, and the dotted trail is later tradition. † marks a death. Tap a name or a dot to open that road.</p>
+    <div class="ov-scroll"><div class="ov" id="ov"></div></div>
+  </section>
+
+  <section aria-labelledby="dbH">
+    <h2 class="sec-h" id="dbH" data-i18n="dbH">How the Apostles Died: the Witnesses Weighed</h2>
+    <p class="sec-p" data-i18n="dbP">The New Testament records only two of these deaths. For the rest, each card shows the verdict of the historical witnesses, how strong it is, and the earliest account of the death. Tap a card to open the full case.</p>
+    <div class="dlegend" id="dlegend"></div>
+    <div class="dboard" id="dboard"></div>
+  </section>
+
+  <section aria-labelledby="wtH">
+    <h2 class="sec-h" id="wtH" data-i18n="wtH">The Witnesses</h2>
+    <p class="sec-p" data-i18n="wtP">Every source quoted on these roads, placed on one line from the resurrection to AD 450. The closer a witness stands to AD 30, the more weight historians give it. Legends written centuries later are shown so you can see where popular stories come from.</p>
+    <div class="wt" id="wt"></div>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="notesH">About this map</h2>
+    <div data-i18n="note1"><b>Scripture, history and tradition</b><p>The New Testament records the deaths of only two apostles: Judas Iscariot and James son of Zebedee. Jewish and Roman historians such as Josephus, Tacitus and Suetonius confirm the world around them. Where the apostles went and how they died comes from early church writers, from Clement of Rome in AD 96 to Eusebius in 325, and from later legends. Each is marked and dated.</p></div>
+    <div data-i18n="note2"><b>How the verdicts are weighed</b><p>A death counts as “very strong” when several independent witnesses report it within living memory, “probable” when an early tradition is consistent, “uncertain” when early sources disagree, and “unknown” when only late legends survive. For comparison, each case also gives the rating of historian Sean McDowell in <i>The Fate of the Apostles</i> (2015; second edition 2025).</p></div>
+    <div data-i18n="note3"><b>The dates</b><p>The timeline places the crucifixion and resurrection in AD 30. Many scholars prefer AD 33, which would move the early dates three years later. Dates for Acts and the letters are approximate and still debated.</p></div>
+    <div data-i18n="note4"><b>Same names, different people</b><p>Philip the evangelist (Acts 6:5; 8:4-40; 21:8), who baptized the Ethiopian official, was one of the Seven, not Philip the apostle. James the Lord’s brother (Galatians 1:19; Acts 15:13), who led the Jerusalem church, is usually seen as a different man from both apostles named James. John Mark is not John the apostle.</p></div>
+    <div data-i18n="note5"><b>Others called apostles</b><p>The New Testament also calls Barnabas (Acts 14:14), James the Lord’s brother (Galatians 1:19), and Andronicus and Junia (Romans 16:7) apostles, in the wider sense of messengers sent out by the church. This map follows the Twelve, Matthias and Paul.</p></div>
+    <div data-i18n="note6"><b>The text and the map</b><p>Every milestone is retold in plain words from the NIV, with short quotations, and links to the full passage on <a href="https://www.biblegateway.com/versions/New-International-Version-NIV-Bible/" target="_blank" rel="noopener noreferrer">BibleGateway</a>. Coastlines come from Natural Earth and are simplified. Routes join known places; the Bible rarely names the roads taken.</p></div>
+  </section>
+</div>
+</body>
+</html>

@@ -9,20 +9,29 @@
 <meta name="theme-color" content="#E8ECF7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#070B1E" media="(prefers-color-scheme: dark)">
 <title>The Apostles on the Way · 길 위의 사도들</title>
-<meta name="description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection, with dated historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
+<meta name="description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection: a year-by-year map, where each New Testament book was written, the historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Apostles on the Way · 길 위의 사도들">
-<meta property="og:description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection, with dated historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
+<meta property="og:description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection: a year-by-year map, where each New Testament book was written, the historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
 <meta property="og:url" content="https://chanwoo777.github.io/apostles-timeline/">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:site_name" content="The Apostles on the Way · 길 위의 사도들">
+<meta property="og:image" content="https://chanwoo777.github.io/apostles-timeline/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Routes of the apostles radiating from Jerusalem on a night-sky map, with the title 길 위의 사도들 · The Apostles on the Way">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Apostles on the Way · 길 위의 사도들">
+<meta name="twitter:description" content="Interactive road maps of the Twelve, Matthias and Paul after the resurrection: a year-by-year map, where each New Testament book was written, the historical witnesses and how each apostle died. English (NIV) and 한국어 (개역개정). 열두 사도와 맛디아, 바울의 길을 따라가는 지도와 연표.">
+<meta name="twitter:image" content="https://chanwoo777.github.io/apostles-timeline/og.png">
 <link rel="canonical" href="https://chanwoo777.github.io/apostles-timeline/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
-<link rel="stylesheet" href="styles.css?v=ad4e3d5f4f">
-<script src="app.js?v=07596f01cc" defer></script>
+<link rel="stylesheet" href="styles.css?v=b05f99e10e">
+<script src="app.js?v=8efce414b7" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -93,6 +102,29 @@
     </section>
 
     <section class="deathfile" id="deathFile" aria-labelledby="dfH"></section>
+  </section>
+
+  <section class="ymsec" id="ymSec" aria-labelledby="ymH">
+    <h2 class="sec-h" id="ymH" data-i18n="ymH">All the Apostles on One Map</h2>
+    <p class="sec-p" data-i18n="ymP">Drag the years, or press play, to watch the apostles spread out from Jerusalem. A filled dot is a place named in Scripture, a ring is a place given by tradition, and † marks where an apostle died. Gold book markers appear where each New Testament book was written. Tap a dot to open that apostle’s road.</p>
+    <div class="ymap">
+      <div class="ym-frame" id="ymFrame">
+        <svg class="map" id="ymSvg" role="img" aria-label="Map of where the apostles were in the chosen year" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="ym-head"><p class="ym-year" id="ymYear"></p><p class="ym-ctx" id="ymCtx" hidden></p></div>
+        <div class="map-tabs ym-tog"><button type="button" id="ymBooks" aria-pressed="true" data-i18n="ymBooks">New Testament books</button></div>
+      </div>
+      <aside class="ym-side"><div class="ym-side-in" id="ymSide"></div></aside>
+    </div>
+    <div class="ym-ctrl">
+      <button type="button" class="navbtn ym-play" id="ymPlay" aria-label="Play"></button>
+      <div class="ym-slider"><input type="range" id="ymRange" step="0.1" aria-label="Year"><div class="ym-ticks" id="ymTicks" aria-hidden="true"></div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="ntH">
+    <h2 class="sec-h" id="ntH" data-i18n="ntH">Where the New Testament Was Written</h2>
+    <p class="sec-p" data-i18n="ntP">Each book’s most likely date and place, and how we know it: the book itself says, it is inferred from the book, it comes from church tradition, or the place is unknown. Dates follow a common conservative reckoning; many scholars date some books later. Tap “On the map” to see a book appear on the map above.</p>
+    <div id="ntList"></div>
   </section>
 
   <section aria-labelledby="ovH">

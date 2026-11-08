@@ -13,6 +13,8 @@ An interactive road map of the twelve apostles, Matthias and Paul, from the day 
 - **The map follows along.** Historical events elsewhere in the world, such as the fire of Rome (Tacitus) or the stoning of James the Lord's brother (Josephus), get their own marker.
 - **Every source outside the Bible is named and dated,** with how many years after the event it was written and how close the writer stood to the apostles.
 - **How did he die?** Each apostle has a case file: the verdict and its strength on a five-level scale, how, where and when he died, who sentenced him, every witness in date order, other accounts, his grave and relics, and historian Sean McDowell's rating.
+- **All the apostles on one map:** drag a year slider from AD 30 to 100, or press play, to watch the apostles spread out from Jerusalem, travel, and die one by one, until only John is left at Ephesus.
+- **Where the New Testament was written:** all 27 books with their likely date, place and author, and how we know the place (the book itself says, inferred from the book, church tradition, or unknown). Gold markers show each book appearing on the year map where it was written.
 - **The deaths board** compares all 14 at a glance. **The witnesses** timeline places every source between AD 30 and 450.
 - **한국어 / English** button switches the whole page. Korean uses the 개역개정 and links to the Korean Bible Society (대한성서공회). English uses the NIV and links to BibleGateway.
 - **Light and dark mode,** and a layout that works on a phone.
@@ -26,7 +28,7 @@ Milestones are retold in plain words with short quotations, and each one links t
 
 Historical witnesses are paraphrased, not quoted. They include Josephus, Tacitus and Suetonius; Clement of Rome, Ignatius, Polycarp and Papias; Dionysius of Corinth, Hegesippus, Irenaeus and Polycrates; Clement of Alexandria, Tertullian, Origen, Eusebius and Jerome; the apocryphal Acts and later legends; and archaeology such as the Gallio inscription, the Takht-i-Bahi inscription and the excavations under St Peter's and at Hierapolis. The modern assessment comes from Sean McDowell, *The Fate of the Apostles* (2015; 2nd edition 2025).
 
-Only Scripture is the Bible. Everything else is marked as history or tradition. The timeline places the crucifixion in AD 30, and all dates are approximate. Routes join known places; the Bible rarely names the roads the apostles took. Coastlines come from [Natural Earth](https://www.naturalearthdata.com/) (public domain).
+Only Scripture is the Bible. Everything else is marked as history or tradition. The timeline places the crucifixion in AD 30, and all dates are approximate. Dates and places for the New Testament books follow a common conservative reckoning; many scholars date some books later. Routes join known places; the Bible rarely names the roads the apostles took. Coastlines come from [Natural Earth](https://www.naturalearthdata.com/) (public domain).
 
 ## How it's built
 
@@ -38,6 +40,7 @@ Plain HTML, CSS and JavaScript with no build step and no dependencies. Fonts com
 | `styles.css` | Starlight design, light and dark mode, phone layout |
 | `app.js` | Map, roads, witnesses, death files, translations and all the data |
 | `favicon.svg` | Browser tab icon |
+| `og.png` | Preview image shown when the link is shared (KakaoTalk, social media, messages) |
 
 To try it locally, open `index.html` in a browser.
 

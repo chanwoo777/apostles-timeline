@@ -262,6 +262,68 @@ svg.map{position:absolute;inset:0;width:100%;height:100%;display:block}
 :root[data-lang="ko"] .reg text{letter-spacing:.12em}
 :root[data-lang="ko"] .stop .st{font-size:15px}
 
+/* One map of all the apostles */
+.ymap{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:14px;margin-top:14px;align-items:stretch}
+@media (max-width:900px){.ymap{grid-template-columns:minmax(0,1fr)}}
+.ym-frame{position:relative;align-self:start;width:100%;aspect-ratio:1.62/1;border-radius:16px;overflow:hidden;border:1px solid var(--rule);background:var(--sea);min-width:0}
+@media (max-width:600px){.ym-frame{aspect-ratio:1.2/1}}
+.ym-head{position:absolute;top:10px;left:14px;right:150px;pointer-events:none;z-index:2}
+.ym-year{margin:0;font:700 clamp(26px,3.6vw,42px)/1 var(--f-display);letter-spacing:.06em;color:var(--ink);text-shadow:0 0 14px var(--sea),0 0 4px var(--sea)}
+.ym-ctx{margin:6px 0 0;display:inline-block;max-width:100%;padding:4px 10px;border-radius:8px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--rule);font-size:14.5px;line-height:1.35;color:var(--ink-2)}
+.ym-tog{left:auto;right:10px}
+.yd{cursor:pointer}
+.yd circle{fill:var(--ap);stroke:var(--halo);stroke-width:1.6px}
+.yd.trad circle{fill:var(--halo);stroke:var(--ap);stroke-width:2.6px}
+.yd.unsure circle{opacity:.55}
+.yd:hover circle{stroke:var(--map-ink);stroke-width:2.4px}
+.ydead text{fill:var(--ap);font:700 15px/1 var(--f-body);text-anchor:middle;opacity:.85;paint-order:stroke;stroke:var(--halo);stroke-width:3px}
+.ylab text{font-family:var(--f-body);font-size:12.5px;font-weight:600;fill:var(--map-ink);paint-order:stroke;stroke:var(--halo);stroke-width:3.4px;stroke-linejoin:round}
+.ybook{cursor:pointer}
+.ybook rect{fill:var(--gold);stroke:var(--halo);stroke-width:1px}
+.ybook.tr rect{fill:var(--halo);stroke:var(--gold);stroke-width:1.4px}
+.ybook.new rect,.ybook.hl rect{stroke:var(--map-ink);stroke-width:1.4px}
+.ybook text{font-family:var(--f-body);font-size:11.5px;font-weight:700;fill:var(--gold);paint-order:stroke;stroke:var(--halo);stroke-width:3px;stroke-linejoin:round}
+.ybook.hl text{font-size:13.5px}
+.ym-side{position:relative;border:1px solid var(--rule);border-radius:16px;background:color-mix(in srgb,var(--panel) 88%,transparent);min-width:0;min-height:0;font-size:14.5px}
+.ym-side-in{position:absolute;inset:0;overflow:auto;padding:14px 14px 12px;scrollbar-width:thin}
+@media (max-width:900px){.ym-side-in{position:static}}
+.ys-h{margin:0;font:700 17px/1.25 var(--f-display);letter-spacing:.04em}
+.ys-c{margin:4px 0 10px;font-size:13.5px;color:var(--ink-3)}
+.ys-g{padding:8px 0;border-top:1px solid var(--rule-2)}
+.ys-pl{margin:0 0 5px;font-weight:700;font-size:14.5px}
+.ys-pl span{font-weight:400;color:var(--ink-3);font-size:13px}
+.ys-aps{display:flex;flex-wrap:wrap;gap:4px}
+.ys-dead .wtap,.ys-gone .wtap{opacity:.72}
+.ys-books{margin:8px 0 0;padding-top:8px;border-top:1px solid var(--rule-2);font-size:13.5px;color:var(--gold)}
+.ym-ctrl{display:flex;align-items:center;gap:14px;margin-top:12px}
+.ym-play{flex:none;width:46px;height:46px}
+.ym-play svg{width:18px;height:18px;fill:currentColor;stroke:currentColor;stroke-width:2.4;stroke-linejoin:round}
+.ym-slider{flex:1;min-width:0}
+.ym-slider input{display:block;width:100%;accent-color:var(--btn);margin:0;height:28px;cursor:pointer}
+.ym-ticks{position:relative;height:18px;margin:0 8px}
+.ym-ticks span{position:absolute;transform:translateX(-50%);font:600 11.5px var(--f-display);letter-spacing:.04em;color:var(--ink-3)}
+
+/* New Testament list */
+.nt-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:14px;color:var(--ink-2)}
+.nt-legend span{display:inline-flex;align-items:center;gap:7px}
+.nt-legend i{width:12px;height:12px;border-radius:3px;background:var(--bc)}
+.b-self{--bc:var(--t-ap)}.b-inf{--bc:var(--t-early)}.b-trad{--bc:var(--t-later)}.b-unk{--bc:var(--ink-3)}
+.ntlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:12px}
+.ntc{display:flex;flex-direction:column;gap:3px;padding:12px 14px 11px;border:1px solid var(--rule);border-left:4px solid var(--bc);border-radius:12px;background:color-mix(in srgb,var(--panel) 88%,transparent);min-width:0;transition:box-shadow .2s}
+.ntc.hl{box-shadow:0 0 0 2px var(--gold),var(--shadow)}
+.ntc p{margin:0}
+.ntc-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ntc-b{font:700 16px/1.2 var(--f-display);letter-spacing:.03em}
+.ntc-d{font-size:13px;color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ntc-p{font-size:15px;font-weight:600}
+.ntc-a{font-size:13.5px;color:var(--ink-2)}
+.ntc-bs{font:600 11px/1.6 var(--f-display);letter-spacing:.08em;color:var(--bc);text-transform:uppercase}
+.ntc-n{font-size:13.5px;color:var(--ink-3)}
+.ntc-act{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:auto;padding-top:7px;font-size:13.5px}
+.ntc-act button{border:0;background:none;padding:0;color:var(--btn);cursor:pointer;font:inherit;font-weight:700}
+.ntc-un{color:var(--ink-3);font-style:italic}
+:root[data-lang="ko"] .ntc-un{font-style:normal}
+
 /* Historical records on the road and map */
 .key-hist{flex:none;width:46px;height:14px;display:flex;justify-content:center;align-items:center}
 .key-hist::before{content:"";width:9px;height:9px;transform:rotate(45deg);background:var(--hist);box-shadow:0 0 0 2px var(--panel),0 0 0 3.5px var(--hist)}
@@ -408,7 +470,7 @@ svg.map{position:absolute;inset:0;width:100%;height:100%;display:block}
   :root .wrap{display:grid;grid-template-columns:240px minmax(0,1fr);column-gap:26px;row-gap:22px;max-width:1460px}
   :root .wrap > *{grid-column:2;min-width:0}
   :root .top{grid-column:1 / -1}
-  :root .picker{grid-column:1;grid-row:2 / span 5;align-self:start;position:sticky;top:16px;flex-direction:column;flex-wrap:nowrap;gap:16px;max-height:calc(100vh - 32px);overflow:auto;padding:14px 10px;border:1px solid var(--rule);border-radius:16px;background:color-mix(in srgb,var(--panel) 88%,transparent)}
+  :root .picker{grid-column:1;grid-row:2 / span 7;align-self:start;position:sticky;top:16px;flex-direction:column;flex-wrap:nowrap;gap:16px;max-height:calc(100vh - 32px);overflow:auto;padding:14px 10px;border:1px solid var(--rule);border-radius:16px;background:color-mix(in srgb,var(--panel) 88%,transparent)}
   :root .pg-row{flex-direction:column;gap:2px}
   :root .chip{width:100%;border-color:transparent}
 }

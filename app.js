@@ -1864,6 +1864,7 @@ function RU(r){ return ko() ? bibleUrl(r) : niv(r); }
 
 /* switching */
 var koFonts = false;
+var onLang = [];
 function relabelRegions(){ regEls.forEach(function(o){ if(o.t) o.t.textContent = ko() ? (KO.reg[o.en] || o.en) : o.en; }); }
 function applyStatic(){
   document.querySelectorAll("[data-i18n]").forEach(function(el){
@@ -1900,6 +1901,7 @@ function setLang(l){
     renderProfile(a); buildPlaces(a); buildRoad(a); paintRoad(false);
     renderDetail(); paintMap(true); renderDeath(a); markSel(a);
   }
+  onLang.forEach(function(f){ f(); });
 }
 function initLang(){
   var saved = null;
@@ -2514,6 +2516,348 @@ function buildWitnesses(){
 }
 
 
+/* ================= WHERE THE NEW TESTAMENT WAS WRITTEN ================= */
+/* bs = how we know the place: self (the book says), inf (inferred from the book), trad (church tradition), unk (not known) */
+var NT = [
+ {id:"jas", b:"James", k:"야고보서", y:47, d:"c. AD 45–49", p:"jerusalem", au:"James, the Lord’s brother", ak:"주의 형제 야고보", bs:"trad", r:"James 1:1",
+  n:"Often thought the earliest New Testament book. Tradition names James, who led the Jerusalem church.", nk:"흔히 신약에서 가장 먼저 쓰인 책으로 봅니다. 전통적으로 예루살렘 교회를 이끈 야고보가 썼다고 합니다."},
+ {id:"gal", b:"Galatians", k:"갈라디아서", y:49, d:"c. AD 48–49", p:"antioch", au:"Paul", ak:"바울", bs:"inf", r:"Galatians 1:1-2",
+  n:"Written to the churches of Galatia around the time of the Jerusalem Council; scholars debate whether before or after it.", nk:"예루살렘 공의회 무렵 갈라디아 교회들에 보낸 편지로, 공의회 이전인지 이후인지는 학자마다 의견이 다릅니다."},
+ {id:"1th", b:"1 Thessalonians", k:"데살로니가전서", y:50.8, d:"c. AD 50–51", p:"corinth", au:"Paul, Silas and Timothy", ak:"바울과 실루아노와 디모데", bs:"inf", r:"1 Thessalonians 3:6",
+  n:"Written soon after Timothy rejoined Paul in Corinth with news from Thessalonica.", nk:"디모데가 데살로니가 소식을 가지고 고린도의 바울에게 돌아온 직후에 썼습니다."},
+ {id:"2th", b:"2 Thessalonians", k:"데살로니가후서", y:51.2, d:"c. AD 51", p:"corinth", au:"Paul, Silas and Timothy", ak:"바울과 실루아노와 디모데", bs:"inf", r:"2 Thessalonians 1:1",
+  n:"A follow-up letter from Corinth a few months later.", nk:"몇 달 뒤 고린도에서 보낸 후속 편지입니다."},
+ {id:"1co", b:"1 Corinthians", k:"고린도전서", y:55, d:"c. AD 54–55", p:"ephesus", au:"Paul and Sosthenes", ak:"바울과 소스데네", bs:"self", r:"1 Corinthians 16:8",
+  n:"Paul says he will stay at Ephesus until Pentecost.", nk:"바울은 오순절까지 에베소에 머물겠다고 말합니다."},
+ {id:"2co", b:"2 Corinthians", k:"고린도후서", y:56, d:"c. AD 55–56", p:"philippi", pn:"Macedonia", pk:"마게도냐", au:"Paul and Timothy", ak:"바울과 디모데", bs:"self", r:"2 Corinthians 7:5-7",
+  n:"Written from Macedonia, after Titus brought news from Corinth.", nk:"디도가 고린도 소식을 전해 온 뒤 마게도냐에서 썼습니다."},
+ {id:"rom", b:"Romans", k:"로마서", y:57, d:"c. AD 57", p:"corinth", au:"Paul", ak:"바울", bs:"inf", r:"Romans 16:23",
+  n:"Sent from Corinth, where Gaius was Paul’s host, before Paul took the collection to Jerusalem.", nk:"예루살렘에 헌금을 가져가기 전, 가이오가 바울을 대접하던 고린도에서 보냈습니다."},
+ {id:"eph", b:"Ephesians", k:"에베소서", y:61, d:"c. AD 60–62", p:"rome", au:"Paul, in prison", ak:"갇힌 바울", bs:"inf", r:"Ephesians 6:20",
+  n:"One of four letters written in chains, usually placed in Rome; some suggest Caesarea or Ephesus.", nk:"사슬에 매인 채 쓴 네 편지 중 하나로, 보통 로마로 보지만 가이사랴나 에베소로 보는 견해도 있습니다."},
+ {id:"col", b:"Colossians", k:"골로새서", y:61.1, d:"c. AD 60–62", p:"rome", au:"Paul and Timothy, in prison", ak:"갇힌 바울과 디모데", bs:"inf", r:"Colossians 4:7-9",
+  n:"Sent with Tychicus and Onesimus, together with the letter to Philemon.", nk:"빌레몬서와 함께 두기고와 오네시모 편에 보냈습니다."},
+ {id:"phm", b:"Philemon", k:"빌레몬서", y:61.2, d:"c. AD 60–62", p:"rome", au:"Paul, in prison", ak:"갇힌 바울", bs:"inf", r:"Philemon 1:10",
+  n:"A personal letter asking Philemon to welcome back Onesimus as a brother.", nk:"오네시모를 형제로 다시 받아 달라고 빌레몬에게 부탁하는 개인 편지입니다."},
+ {id:"luk", b:"Luke", k:"누가복음", y:61.4, d:"c. AD 60–62", p:null, pn:"Place unknown", pk:"장소 미상", au:"Luke, Paul’s companion", ak:"바울의 동역자 누가", bs:"unk", r:"Luke 1:1-4",
+  n:"Written for Theophilus. Early tradition names Luke the physician, but the place is not known.", nk:"데오빌로에게 바친 책입니다. 초대 전승은 의사 누가를 저자로 꼽지만, 쓴 곳은 알 수 없습니다."},
+ {id:"php", b:"Philippians", k:"빌립보서", y:61.7, d:"c. AD 61–62", p:"rome", au:"Paul and Timothy, in prison", ak:"갇힌 바울과 디모데", bs:"inf", r:"Philippians 1:13",
+  n:"Mentions the palace guard and those of Caesar’s household.", nk:"시위대와 가이사의 집 사람들을 언급합니다."},
+ {id:"act", b:"Acts", k:"사도행전", y:62.3, d:"c. AD 62", p:null, pn:"Place unknown", pk:"장소 미상", au:"Luke", ak:"누가", bs:"unk", r:"Acts 28:30-31",
+  n:"Ends with Paul’s two years in Rome, so many think it was finished there at about that time.", nk:"바울이 로마에서 보낸 두 해로 끝나기 때문에, 많은 이들이 그 무렵 로마에서 완성되었다고 봅니다."},
+ {id:"mrk", b:"Mark", k:"마가복음", y:63, d:"c. AD 55–65", p:"rome", au:"Mark, Peter’s interpreter", ak:"베드로의 통역자 마가", bs:"trad", r:"Mark 1:1",
+  n:"Papias and Irenaeus say Mark wrote down Peter’s preaching; later writers place this in Rome.", nk:"파피아스와 이레니우스는 마가가 베드로의 설교를 기록했다고 하고, 후대 저술가들은 그곳을 로마로 봅니다."},
+ {id:"1pe", b:"1 Peter", k:"베드로전서", y:63.2, d:"c. AD 62–64", p:"rome", au:"Peter, with Silas", ak:"베드로 (실루아노를 통해)", bs:"self", r:"1 Peter 5:12-13",
+  n:"Sent from “Babylon,” most likely a code name for Rome.", nk:"‘바벨론’에서 보냈는데, 로마를 가리키는 암호로 보입니다."},
+ {id:"1ti", b:"1 Timothy", k:"디모데전서", y:63.6, d:"c. AD 63–64", p:"philippi", pn:"Macedonia", pk:"마게도냐", au:"Paul", ak:"바울", bs:"inf", r:"1 Timothy 1:3",
+  n:"Paul had gone on to Macedonia, leaving Timothy at Ephesus.", nk:"바울은 디모데를 에베소에 남겨 두고 마게도냐로 갔습니다."},
+ {id:"tit", b:"Titus", k:"디도서", y:64, d:"c. AD 63–65", p:null, pn:"Macedonia or Greece (not certain)", pk:"마게도냐 또는 그리스 (불확실)", au:"Paul", ak:"바울", bs:"unk", r:"Titus 3:12",
+  n:"Written before Paul spent a winter at Nicopolis; where he was is not stated.", nk:"바울이 니고볼리에서 겨울을 나기 전에 썼지만, 어디서 썼는지는 밝히지 않습니다."},
+ {id:"2pe", b:"2 Peter", k:"베드로후서", y:65.5, d:"c. AD 65–67", p:"rome", au:"Peter", ak:"베드로", bs:"trad", r:"2 Peter 1:14",
+  n:"Peter writes that his death is near. Tradition places him in Rome; many scholars date the letter later.", nk:"베드로는 자신의 죽음이 가까웠다고 씁니다. 전승은 로마로 보지만, 많은 학자는 더 늦게 쓰였다고 봅니다."},
+ {id:"mat", b:"Matthew", k:"마태복음", y:66, d:"c. AD 60s–70s", p:"jerusalem", pn:"Judea", pk:"유대", au:"Matthew", ak:"마태", bs:"trad", r:"Matthew 1:1",
+  n:"Papias and Irenaeus say Matthew wrote for the Hebrews; many scholars suggest Antioch instead.", nk:"파피아스와 이레니우스는 마태가 히브리인을 위해 썼다고 하며, 많은 학자는 안디옥을 제안합니다."},
+ {id:"2ti", b:"2 Timothy", k:"디모데후서", y:66.6, d:"c. AD 66–67", p:"rome", au:"Paul, in prison", ak:"갇힌 바울", bs:"self", r:"2 Timothy 1:17",
+  n:"Paul’s last letter, written in chains in Rome.", nk:"로마에서 사슬에 매인 채 쓴 바울의 마지막 편지입니다."},
+ {id:"heb", b:"Hebrews", k:"히브리서", y:67, d:"c. AD 64–69", p:null, pn:"Place unknown", pk:"장소 미상", au:"Not named", ak:"밝히지 않음", bs:"unk", r:"Hebrews 13:24",
+  n:"The author is not named. Greetings from those from Italy suggest a link with Italy.", nk:"저자는 이름을 밝히지 않습니다. 이달리야에서 온 사람들의 문안은 이탈리아와의 관련을 암시합니다."},
+ {id:"jud", b:"Jude", k:"유다서", y:70, d:"c. AD 65–80", p:null, pn:"Place unknown", pk:"장소 미상", au:"Jude, brother of James", ak:"야고보의 형제 유다", bs:"unk", r:"Jude 1:1",
+  n:"From Jude, a brother of James, usually taken to be a brother of Jesus.", nk:"야고보의 형제 유다가 쓴 편지로, 보통 예수의 형제로 봅니다."},
+ {id:"jhn", b:"John", k:"요한복음", y:90, d:"c. AD 85–95", p:"ephesus", au:"John", ak:"요한", bs:"trad", r:"John 20:31",
+  n:"Irenaeus says John published his Gospel while living at Ephesus.", nk:"이레니우스는 요한이 에베소에 살면서 복음서를 펴냈다고 말합니다."},
+ {id:"1jn", b:"1 John", k:"요한일서", y:92, d:"c. AD 90–95", p:"ephesus", au:"John", ak:"요한", bs:"trad", r:"1 John 1:1",
+  n:"Calls believers to walk in the light and love one another.", nk:"신자들에게 빛 가운데 행하고 서로 사랑하라고 권합니다."},
+ {id:"2jn", b:"2 John", k:"요한이서", y:92.2, d:"c. AD 90–95", p:"ephesus", au:"The elder", ak:"장로", bs:"trad", r:"2 John 1:1",
+  n:"A short letter to a chosen lady and her children.", nk:"택함받은 부녀와 그 자녀들에게 보낸 짧은 편지입니다."},
+ {id:"3jn", b:"3 John", k:"요한삼서", y:92.4, d:"c. AD 90–95", p:"ephesus", au:"The elder", ak:"장로", bs:"trad", r:"3 John 1:1",
+  n:"A personal note to Gaius about welcoming traveling teachers.", nk:"순회 전도자들을 맞아들이는 일에 관해 가이오에게 보낸 짧은 편지입니다."},
+ {id:"rev", b:"Revelation", k:"요한계시록", y:95, d:"c. AD 95", p:"patmos", au:"John", ak:"요한", bs:"self", r:"Revelation 1:9",
+  n:"John saw the vision on the island of Patmos.", nk:"요한은 밧모 섬에서 환상을 보았습니다."}
+];
+var NTBS = {self:["The book itself says","책 자체가 밝힘"], inf:["Inferred from the book","책 내용으로 추정"], trad:["Church tradition","교회 전승"], unk:["Place unknown","장소 미상"]};
+var NTY = {}; NT.forEach(function(n){ NTY[n.id] = n; });
+
+/* more Bible books for the Korean links */
+BK.push(["2 Thessalonians","데살로니가후서","2th"],["2 John","요한이서","2jn"],["3 John","요한삼서","3jn"],["Ephesians","에베소서","eph"],["Colossians","골로새서","col"],
+        ["Philemon","빌레몬서","phm"],["Hebrews","히브리서","heb"],["James","야고보서","jas"],["Jude","유다서","jud"]);
+BK.sort(function(a, b){ return b[0].length - a[0].length; });
+
+/* strings */
+var YCTX = [[30.4,"Pentecost in Jerusalem","예루살렘의 오순절"],[33.8,"Stephen is stoned; the church scatters","스데반의 순교, 교회가 흩어지다"],[34.1,"Saul meets Jesus on the Damascus road","사울이 다메섹 도상에서 예수를 만나다"],
+  [44,"Herod Agrippa kills James","헤롯 아그립바가 야고보를 죽이다"],[46,"Paul’s first journey","바울의 1차 전도 여행"],[49,"The Jerusalem Council","예루살렘 공의회"],[50,"Paul crosses into Europe","바울이 유럽으로 건너가다"],
+  [57.4,"Paul is arrested in Jerusalem","바울이 예루살렘에서 체포되다"],[59.8,"Shipwreck on the way to Rome","로마로 가던 길의 파선"],[62,"James the Lord’s brother is stoned","주의 형제 야고보가 돌에 맞다"],
+  [64.5,"Rome burns; Nero’s persecution","로마 대화재와 네로의 박해"],[66,"The Jewish revolt begins","유대 반란이 시작되다"],[70,"Jerusalem and the temple destroyed","예루살렘과 성전이 무너지다"],
+  [95,"John exiled on Patmos","요한이 밧모로 유배되다"],[99.5,"John, the last apostle, dies","마지막 사도 요한이 죽다"]];
+(function(){
+  var en = {
+    ymH:"All the Apostles on One Map",
+    ymP:"Drag the years, or press play, to watch the apostles spread out from Jerusalem. A filled dot is a place named in Scripture, a ring is a place given by tradition, and † marks where an apostle died. Gold book markers appear where each New Testament book was written. Tap a dot to open that apostle’s road.",
+    ymBooks:"New Testament books", ymPlay:"Play", ymPause:"Pause", ymYear:"Year",
+    ysIn:"Where they are in {y}", ysCount:"{a} living · {d} died", ysCountU:" · {u} no further record",
+    ysMoving:"On the road", ysDied:"Died", ysGone:"No further record", ysBooks:"Books written so far: {n}",
+    ntH:"Where the New Testament Was Written",
+    ntP:"Each book’s most likely date and place, and how we know it: the book itself says, it is inferred from the book, it comes from church tradition, or the place is unknown. Dates follow a common conservative reckoning; many scholars date some books later. Tap “On the map” to see a book appear on the map above.",
+    ntOnMap:"On the map", ntRead:"Read", ntRead2:"Read (NIV)", ntUnmapped:"Not on the map: place unknown"
+  };
+  var ko = {
+    ymH:"한 지도에 모인 모든 사도",
+    ymP:"연도를 끌거나 재생 버튼을 눌러 사도들이 예루살렘에서 흩어져 나가는 모습을 보세요. 채워진 점은 성경에 기록된 장소, 고리는 전승이 전하는 장소이고, †는 사도가 죽은 곳입니다. 금색 책 표시는 신약 성경 각 권이 쓰인 곳에 나타납니다. 점을 누르면 그 사도의 길이 열립니다.",
+    ymBooks:"신약 성경이 쓰인 곳", ymPlay:"재생", ymPause:"일시 정지", ymYear:"연도",
+    ysIn:"{y}의 사도들", ysCount:"생존 {a} · 죽음 {d}", ysCountU:" · 이후 기록 없음 {u}",
+    ysMoving:"이동 중", ysDied:"죽음", ysGone:"이후 기록 없음", ysBooks:"지금까지 쓰인 책: {n}권",
+    ntH:"신약 성경은 어디서 쓰였나",
+    ntP:"각 권이 쓰였을 가능성이 가장 높은 시기와 장소, 그리고 그 근거를 보여 줍니다. 책 자체가 밝히는 경우, 책 내용으로 추정하는 경우, 교회 전승에서 온 경우, 장소를 알 수 없는 경우로 나누었습니다. 연대는 흔히 쓰는 보수적인 계산을 따랐으며, 많은 학자는 일부 책을 더 늦게 봅니다. ‘지도에서 보기’를 누르면 위 지도에 그 책이 나타납니다.",
+    ntOnMap:"지도에서 보기", ntRead:"읽기", ntRead2:"개역개정으로 읽기", ntUnmapped:"지도에 없음: 장소 미상"
+  };
+  for(var k in en) EN[k] = en[k];
+  for(k in ko) KO.ui[k] = ko[k];
+})();
+
+/* ================= ONE MAP: ALL THE APOSTLES BY YEAR ================= */
+var YMIN = 30.4, YMAX = 100;
+var YM = {svg:null, frame:null, gDots:null, gBooks:null, gLab:null, regs:[], k:1, year:YMIN, playing:false, books:true, raf:0, t0:0, hl:null, side:""};
+var YSTART = {paul:34.1, matthias:30.35};
+
+function ymDrawBase(target){
+  var regs = [];
+  S("rect", {class:"sea", x:-200, y:-200, width:EXT.w+400, height:EXT.h+400}, target);
+  var grat = S("g", {class:"grat"}, target);
+  for(var lo=10; lo<=55; lo+=5) S("path", {d:dpath([P([lo,20]), P([lo,49])])}, grat);
+  for(var la=25; la<=45; la+=5) S("path", {d:dpath([P([6,la]), P([60,la])])}, grat);
+  S("path", {class:"coastwash", d:MAP.land}, target);
+  S("path", {class:"land", d:MAP.land}, target);
+  HAND_ISLANDS.forEach(function(r){ S("path", {class:"land", d:dpath(r.map(P), true)}, target); });
+  S("path", {class:"lake", d:MAP.lakes}, target);
+  HAND_LAKES.forEach(function(r){ S("path", {class:"lake", d:dpath(spline(r.concat([r[0]]).map(P), 6), true)}, target); });
+  var gr = S("g", null, target);
+  RIVERS.forEach(function(r){ S("path", {class:"river", d:dpath(spline(r.map(P), 6))}, gr); });
+  var gReg = S("g", null, target);
+  REG.forEach(function(r){
+    if(!((r.min == null || EXT.w >= r.min) && (r.max == null || EXT.w < r.max))) return;
+    var p = P(r.ll), g = S("g", {class:"reg" + (r.c ? " " + r.c : "")}, gReg);
+    var t = S("text", {x:0, y:4}, g); t.textContent = r.t;
+    regs.push({g:g, x:p[0], y:p[1], t:t, en:r.t});
+  });
+  return regs;
+}
+
+function ymTimeline(a){
+  if(a.ytl) return a.ytl;
+  var tl = [];
+  a.stops.forEach(function(st, i){
+    if(st.hist) return;
+    var k = baseKey(st.p); if(!k) return;
+    tl.push({y:st.y, k:k, trad:st.trad, i:i});
+  });
+  tl.sort(function(p, q){ return p.y - q.y || p.i - q.i; });
+  a.ytl = tl;
+  return tl;
+}
+function smooth(t){ return t * t * (3 - 2 * t); }
+/* where an apostle is in year Y */
+function ymState(a, Y){
+  if(a.id === "judas") return null;
+  if(Y < (YSTART[a.id] || 30)) return null;
+  var tl = ymTimeline(a), d = a.death, cur = tl[0], nxt = null, j;
+  for(j=0;j<tl.length;j++){ if(tl[j].y <= Y) cur = tl[j]; else { nxt = tl[j]; break; } }
+  if(d.y != null && d.k !== "?" && Y >= d.y){
+    var at = tl[0];
+    for(j=0;j<tl.length;j++){ if(tl[j].y <= d.y + 0.01) at = tl[j]; }
+    return {dead:true, k:at.k, i:a.stops.length - 1};
+  }
+  var last = tl[tl.length - 1];
+  if(d.k === "?" && Y > last.y + 4) return {gone:true, i:a.stops.length - 1};
+  if(nxt){
+    var tw = Math.min(1, nxt.y - cur.y), t = (Y - (nxt.y - tw)) / (tw || 1);
+    if(t > 0){
+      var p0 = P(PL[cur.k].ll), p1 = P(PL[nxt.k].ll), e = smooth(clamp(t, 0, 1));
+      return {move:true, xy:[lerp(p0[0], p1[0], e), lerp(p0[1], p1[1], e)], trad:nxt.trad, to:nxt.k, i:nxt.i};
+    }
+  }
+  return {k:cur.k, trad:cur.trad, i:cur.i, unsure:d.k === "?" && Y > last.y};
+}
+
+function ymLabelYear(Y){ var y = Math.floor(Y + 1e-6); return ko() ? "주후 " + y + "년" : "AD " + y; }
+function ymScale(){
+  var w = YM.svg.clientWidth || YM.frame.clientWidth || 800, h = YM.svg.clientHeight || YM.frame.clientHeight || 500;
+  YM.k = Math.max(EXT.w / w, EXT.h / h);
+  YM.regs.forEach(function(o){ o.g.setAttribute("transform", "translate(" + o.x.toFixed(1) + " " + o.y.toFixed(1) + ") scale(" + YM.k.toFixed(4) + ")"); });
+}
+function ymRelabel(){ YM.regs.forEach(function(o){ o.t.textContent = ko() ? (KO.reg[o.en] || o.en) : o.en; }); }
+function tf(x, y, k){ return 'transform="translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') scale(' + k.toFixed(4) + ')"'; }
+
+function ymRender(){
+  var Y = YM.year, k = YM.k, live = [], groups = {}, order = [], dead = {}, deadOrder = [], gone = [], moving = [];
+  AP.forEach(function(a){
+    var s = ymState(a, Y); if(!s) return;
+    if(s.gone){ gone.push(a); return; }
+    if(s.dead){ if(!dead[s.k]){ dead[s.k] = []; deadOrder.push(s.k); } dead[s.k].push(a); return; }
+    if(s.move){ moving.push({a:a, s:s}); return; }
+    if(!groups[s.k]){ groups[s.k] = []; order.push(s.k); }
+    groups[s.k].push({a:a, s:s});
+  });
+  var html = "", labels = "", placed = [];
+  function ring(n, i){
+    if(n === 1) return [0, 0];
+    var r = 6.5 + n * 1.7, ang = -Math.PI / 2 + i * 2 * Math.PI / n;
+    return [Math.cos(ang) * r, Math.sin(ang) * r];
+  }
+  function dot(a, s, x, y){
+    return '<g class="yd apc' + (s.trad ? ' trad' : '') + (s.unsure ? ' unsure' : '') + '" data-ap="' + a.id + '" data-i="' + s.i + '" style="' + apColorStyle(a) + '" ' + tf(x, y, k) + '><circle r="6"></circle><title>' + esc(apName(a)) + '</title></g>';
+  }
+  deadOrder.forEach(function(key){
+    var c = P(PL[key].ll), list = dead[key];
+    list.forEach(function(a, i){
+      var off = ring(list.length, i);
+      html += '<g class="ydead apc" style="' + apColorStyle(a) + '" ' + tf(c[0] + (off[0] * 0.8) * k, c[1] + (12 + off[1] * 0.8) * k, k) + '><text y="5">†</text><title>' + esc(apName(a) + " · " + DS(a)) + '</title></g>';
+    });
+  });
+  order.forEach(function(key){
+    var c = P(PL[key].ll), list = groups[key];
+    list.forEach(function(o, i){ var off = ring(list.length, i); html += dot(o.a, o.s, c[0] + off[0] * k, c[1] + off[1] * k); });
+  });
+  moving.forEach(function(o){ html += dot(o.a, o.s, o.s.xy[0], o.s.xy[1]); });
+  YM.gDots.innerHTML = html;
+
+  /* place labels, biggest groups first, skipping any that would collide */
+  order.slice().sort(function(p, q){ return groups[q].length - groups[p].length; }).forEach(function(key){
+    var c = P(PL[key].ll), n = groups[key].length, r = n > 1 ? 6.5 + n * 1.7 + 6 : 9;
+    var name = PN(key), wpx = name.length * (ko() ? 12 : 6.8) + 8, x = c[0] + r * k, y = c[1] + 4 * k;
+    var box = [x, y - 12 * k, x + wpx * k, y + 4 * k];
+    for(var i=0;i<placed.length;i++){ var b = placed[i]; if(!(box[2] < b[0] || box[0] > b[2] || box[3] < b[1] || box[1] > b[3])) return; }
+    placed.push(box);
+    labels += '<g class="ylab" ' + tf(x, y, k) + '><text>' + esc(name) + '</text></g>';
+  });
+  YM.gLab.innerHTML = labels;
+
+  /* New Testament books written so far */
+  var bh = "", nb = 0;
+  if(YM.books){
+    var byPlace = {}, bOrder = [];
+    NT.forEach(function(b){ if(b.y > Y + 1e-6) return; nb++; if(!b.p) return; if(!byPlace[b.p]){ byPlace[b.p] = []; bOrder.push(b.p); } byPlace[b.p].push(b); });
+    bOrder.forEach(function(key){
+      var c = P(PL[key].ll), list = byPlace[key], cols = Math.min(list.length, 5);
+      list.forEach(function(b, i){
+        var col = i % 5, row = Math.floor(i / 5);
+        var x = c[0] + (col - (cols - 1) / 2) * 9 * k, y = c[1] - (18 + row * 11) * k;
+        var fresh = Y - b.y < 1.6, hl = YM.hl === b.id;
+        bh += '<g class="ybook' + (b.bs === "trad" ? " tr" : "") + (fresh ? " new" : "") + (hl ? " hl" : "") + '" data-nt="' + b.id + '" ' + tf(x, y, k) + '><rect x="-3.5" y="-4.5" width="7" height="9" rx="1"></rect>' +
+          ((fresh || hl) ? '<text x="0" y="-8" text-anchor="middle">' + esc(ko() ? b.k : b.b) + '</text>' : '') + '<title>' + esc((ko() ? b.k : b.b) + " · " + ntPlace(b) + " · " + ntDate(b)) + '</title></g>';
+      });
+    });
+  } else NT.forEach(function(b){ if(b.y <= Y + 1e-6) nb++; });
+  YM.gBooks.innerHTML = bh;
+
+  /* year, context and side panel */
+  $("ymYear").textContent = ymLabelYear(Y);
+  var ctx = "";
+  YCTX.forEach(function(c){ if(c[0] <= Y + 1e-6 && Y - c[0] < 3) ctx = ko() ? c[2] : c[1]; });
+  $("ymCtx").textContent = ctx; $("ymCtx").hidden = !ctx;
+  var r = $("ymRange"); if(Math.abs(+r.value - Y) > 0.05) r.value = Y.toFixed(1);
+  r.setAttribute("aria-valuetext", ymLabelYear(Y));
+
+  var nDead = 0; deadOrder.forEach(function(key){ nDead += dead[key].length; });
+  var nLive = moving.length; order.forEach(function(key){ nLive += groups[key].length; });
+  function chip(a, idx, extra){ return '<button type="button" class="wtap apc" data-ap="' + a.id + '" data-i="' + idx + '" style="' + apColorStyle(a) + '"><i></i>' + esc(apShort(a)) + (extra || "") + '</button>'; }
+  var sh = '<p class="ys-h">' + esc(tr("ysIn", {y:ymLabelYear(Y)})) + '</p><p class="ys-c">' + esc(tr("ysCount", {a:nLive, d:nDead}) + (gone.length ? tr("ysCountU", {u:gone.length}) : "")) + '</p>';
+  order.slice().sort(function(p, q){ return groups[q].length - groups[p].length; }).forEach(function(key){
+    sh += '<div class="ys-g"><p class="ys-pl">' + esc(PN(key)) + ' <span>' + groups[key].length + '</span></p><div class="ys-aps">' + groups[key].map(function(o){ return chip(o.a, o.s.i); }).join("") + '</div></div>';
+  });
+  if(moving.length) sh += '<div class="ys-g"><p class="ys-pl">' + esc(tr("ysMoving")) + '</p><div class="ys-aps">' + moving.map(function(o){ return chip(o.a, o.s.i, ' → ' + esc(PN(o.s.to))); }).join("") + '</div></div>';
+  if(nDead){
+    sh += '<div class="ys-g ys-dead"><p class="ys-pl">† ' + esc(tr("ysDied")) + '</p><div class="ys-aps">';
+    deadOrder.forEach(function(key){ dead[key].forEach(function(a){ sh += chip(a, a.stops.length - 1, ' · ' + esc(PN(key))); }); });
+    sh += '</div></div>';
+  }
+  if(gone.length) sh += '<div class="ys-g ys-gone"><p class="ys-pl">' + esc(tr("ysGone")) + '</p><div class="ys-aps">' + gone.map(function(a){ return chip(a, a.stops.length - 1); }).join("") + '</div></div>';
+  if(YM.books) sh += '<p class="ys-books">' + esc(tr("ysBooks", {n:nb})) + '</p>';
+  if(sh !== YM.side){ $("ymSide").innerHTML = sh; YM.side = sh; }
+}
+
+function ymSet(Y){ YM.year = clamp(Y, YMIN, YMAX); ymRender(); }
+function ymPlay(on){
+  YM.playing = on;
+  var b = $("ymPlay");
+  b.setAttribute("aria-label", tr(on ? "ymPause" : "ymPlay"));
+  b.innerHTML = on ? '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></svg>';
+  clearTimeout(YM.raf);
+  if(!on) return;
+  if(YM.year >= YMAX - 0.05) YM.year = YMIN;
+  var last = performance.now();
+  function step(){
+    var now = performance.now(), dt = Math.min(0.1, (now - last) / 1000); last = now;
+    ymSet(YM.year + dt * 2.6);
+    if(YM.year >= YMAX){ ymPlay(false); return; }
+    YM.raf = setTimeout(step, 33);
+  }
+  YM.raf = setTimeout(step, 33);
+}
+function ymInit(){
+  YM.svg = $("ymSvg"); YM.frame = $("ymFrame");
+  YM.svg.setAttribute("viewBox", "0 0 " + EXT.w.toFixed(1) + " " + EXT.h.toFixed(1));
+  YM.regs = ymDrawBase(YM.svg);
+  YM.gBooks = S("g", null, YM.svg);
+  YM.gLab = S("g", null, YM.svg);
+  YM.gDots = S("g", null, YM.svg);
+  var ticks = "";
+  [30,40,50,60,70,80,90,100].forEach(function(y){ ticks += '<span style="left:' + ((Math.max(y, YMIN) - YMIN) / (YMAX - YMIN) * 100).toFixed(2) + '%">' + y + '</span>'; });
+  $("ymTicks").innerHTML = ticks;
+  var r = $("ymRange");
+  r.min = YMIN; r.max = YMAX; r.value = YMIN;
+  r.addEventListener("input", function(){ ymPlay(false); ymSet(+r.value); });
+  $("ymPlay").addEventListener("click", function(){ ymPlay(!YM.playing); });
+  $("ymBooks").addEventListener("click", function(){ YM.books = !YM.books; this.setAttribute("aria-pressed", YM.books ? "true" : "false"); ymRender(); });
+  function openAp(ev){
+    var b = ev.target.closest("[data-ap]"); if(!b) return;
+    ymPlay(false);
+    go(b.getAttribute("data-ap"), +b.getAttribute("data-i"));
+    scrollToEl($("journey"));
+  }
+  YM.svg.addEventListener("click", function(ev){
+    var bk = ev.target.closest("[data-nt]");
+    if(bk){ var c = document.querySelector('#ntList [data-ntc="' + bk.getAttribute("data-nt") + '"]'); if(c){ scrollToEl(c); c.classList.add("hl"); setTimeout(function(){ c.classList.remove("hl"); }, 2200); } return; }
+    openAp(ev);
+  });
+  $("ymSide").addEventListener("click", openAp);
+  ymRelabel(); ymScale(); ymPlay(false); ymSet(YMIN);
+  if(window.ResizeObserver) new ResizeObserver(function(){ ymScale(); ymRender(); }).observe(YM.frame);
+  ntBuild();
+  onLang.push(function(){ ymRelabel(); YM.side = ""; ymPlay(YM.playing); ymRender(); ntBuild(); });
+}
+
+/* ================= NEW TESTAMENT LIST ================= */
+function ntPlace(b){ return ko() ? (b.pk || PN(b.p)) : (b.pn || PN(b.p)); }
+function ntDate(b){ return ko() ? koDate(b.d) : b.d; }
+function ntBuild(){
+  var html = '<div class="nt-legend">' + ["self","inf","trad","unk"].map(function(k){ return '<span class="b-' + k + '"><i></i>' + esc(NTBS[k][ko() ? 1 : 0]) + '</span>'; }).join("") + '</div><div class="ntlist">';
+  NT.forEach(function(b){
+    html += '<article class="ntc b-' + b.bs + '" data-ntc="' + b.id + '">' +
+      '<div class="ntc-top"><span class="ntc-b">' + esc(ko() ? b.k : b.b) + '</span><span class="ntc-d">' + esc(ntDate(b)) + '</span></div>' +
+      '<p class="ntc-p">' + esc(ntPlace(b)) + '</p>' +
+      '<p class="ntc-a">' + esc(ko() ? b.ak : b.au) + '</p>' +
+      '<p class="ntc-bs">' + esc(NTBS[b.bs][ko() ? 1 : 0]) + '</p>' +
+      '<p class="ntc-n">' + esc(ko() ? b.nk : b.n) + '</p>' +
+      '<div class="ntc-act">' + (b.p ? '<button type="button" data-ntmap="' + b.id + '">' + esc(tr("ntOnMap")) + ' ↑</button>' : '<span class="ntc-un">' + esc(tr("ntUnmapped")) + '</span>') +
+        '<a href="' + RU(b.r) + '" target="_blank" rel="noopener noreferrer">' + esc(RL(b.r)) + '</a></div></article>';
+  });
+  html += '</div>';
+  var el = $("ntList");
+  el.innerHTML = html;
+  if(!el.__on){
+    el.__on = 1;
+    el.addEventListener("click", function(ev){
+      var b = ev.target.closest("[data-ntmap]"); if(!b) return;
+      var bk = NTY[b.getAttribute("data-ntmap")];
+      ymPlay(false);
+      if(!YM.books){ YM.books = true; $("ymBooks").setAttribute("aria-pressed", "true"); }
+      YM.hl = bk.id; ymSet(bk.y + 0.05);
+      scrollToEl($("ymSec"));
+      setTimeout(function(){ if(YM.hl === bk.id){ YM.hl = null; ymRender(); } }, 4000);
+    });
+  }
+}
+
+
 /* ================= SELECTION ================= */
 function selectStop(i, opts){
   var a = state.ap; if(!a) return;
@@ -2594,6 +2938,7 @@ buildPicker();
 buildOverview();
 buildBoard();
 buildWitnesses();
+ymInit();
 var startId = location.hash.slice(1);
 selectApostle(BY[startId] ? startId : "peter", null);
 })();

@@ -2593,6 +2593,7 @@ var YCTX = [[30.4,"Pentecost in Jerusalem","예루살렘의 오순절"],[33.8,"S
     ymH:"All the Apostles on One Map",
     ymP:"Drag the years, or press play, to watch the apostles spread out from Jerusalem. A filled dot is a place named in Scripture, a ring is a place given by tradition, and † marks where an apostle died. Gold book markers appear where each New Testament book was written. Tap a dot to open that apostle’s road.",
     ymBooks:"New Testament books", ymPlay:"Play", ymPause:"Pause", ymYear:"Year",
+    spSlow:"Slow", spNormal:"Normal", spFast:"Fast",
     ysIn:"Where they are in {y}", ysCount:"{a} living · {d} died", ysCountU:" · {u} no further record",
     ysMoving:"On the road", ysDied:"Died", ysGone:"No further record", ysBooks:"Books written so far: {n}",
     ntH:"Where the New Testament Was Written",
@@ -2603,6 +2604,7 @@ var YCTX = [[30.4,"Pentecost in Jerusalem","예루살렘의 오순절"],[33.8,"S
     ymH:"한 지도에 모인 모든 사도",
     ymP:"연도를 끌거나 재생 버튼을 눌러 사도들이 예루살렘에서 흩어져 나가는 모습을 보세요. 채워진 점은 성경에 기록된 장소, 고리는 전승이 전하는 장소이고, †는 사도가 죽은 곳입니다. 금색 책 표시는 신약 성경 각 권이 쓰인 곳에 나타납니다. 점을 누르면 그 사도의 길이 열립니다.",
     ymBooks:"신약 성경이 쓰인 곳", ymPlay:"재생", ymPause:"일시 정지", ymYear:"연도",
+    spSlow:"느리게", spNormal:"보통", spFast:"빠르게",
     ysIn:"{y}의 사도들", ysCount:"생존 {a} · 죽음 {d}", ysCountU:" · 이후 기록 없음 {u}",
     ysMoving:"이동 중", ysDied:"죽음", ysGone:"이후 기록 없음", ysBooks:"지금까지 쓰인 책: {n}권",
     ntH:"신약 성경은 어디서 쓰였나",
@@ -2615,7 +2617,7 @@ var YCTX = [[30.4,"Pentecost in Jerusalem","예루살렘의 오순절"],[33.8,"S
 
 /* ================= ONE MAP: ALL THE APOSTLES BY YEAR ================= */
 var YMIN = 30.4, YMAX = 100;
-var YM = {svg:null, frame:null, gDots:null, gBooks:null, gLab:null, regs:[], k:1, year:YMIN, playing:false, books:true, raf:0, t0:0, hl:null, side:""};
+var YM = {svg:null, frame:null, gDots:null, gBooks:null, gLab:null, regs:[], k:1, year:YMIN, playing:false, books:true, raf:0, t0:0, hl:null, side:"", speed:1};
 var YSTART = {paul:34.1, matthias:30.35};
 
 function ymDrawBase(target){
@@ -2786,7 +2788,7 @@ function ymPlay(on){
   var last = performance.now();
   function step(){
     var now = performance.now(), dt = Math.min(0.1, (now - last) / 1000); last = now;
-    ymSet(YM.year + dt * 2.6);
+    ymSet(YM.year + dt * YM.speed);
     if(YM.year >= YMAX){ ymPlay(false); return; }
     YM.raf = setTimeout(step, 33);
   }
@@ -2806,6 +2808,11 @@ function ymInit(){
   r.min = YMIN; r.max = YMAX; r.value = YMIN;
   r.addEventListener("input", function(){ ymPlay(false); ymSet(+r.value); });
   $("ymPlay").addEventListener("click", function(){ ymPlay(!YM.playing); });
+  $("ymSpeed").addEventListener("click", function(ev){
+    var b = ev.target.closest("[data-sp]"); if(!b) return;
+    YM.speed = +b.getAttribute("data-sp");
+    this.querySelectorAll("[data-sp]").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+  });
   $("ymBooks").addEventListener("click", function(){ YM.books = !YM.books; this.setAttribute("aria-pressed", YM.books ? "true" : "false"); ymRender(); });
   function openAp(ev){
     var b = ev.target.closest("[data-ap]"); if(!b) return;

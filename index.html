@@ -30,8 +30,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
-<link rel="stylesheet" href="styles.css?v=0aa6dc0756">
-<script src="app.js?v=7a37b80ec0" defer></script>
+<link rel="stylesheet" href="styles.css?v=78ec2402e1">
+<script src="app.js?v=5a669e8d1e" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -118,6 +118,7 @@
     <div class="ym-ctrl">
       <button type="button" class="navbtn ym-play" id="ymPlay" aria-label="Play"></button>
       <div class="ym-slider"><input type="range" id="ymRange" step="0.1" aria-label="Year"><div class="ym-ticks" id="ymTicks" aria-hidden="true"></div></div>
+      <div class="ym-speed" id="ymSpeed" role="group" aria-label="Playback speed · 재생 속도"><button type="button" data-sp="0.5" aria-pressed="false" data-i18n="spSlow">Slow</button><button type="button" data-sp="1" aria-pressed="true" data-i18n="spNormal">Normal</button><button type="button" data-sp="2.5" aria-pressed="false" data-i18n="spFast">Fast</button></div>
     </div>
   </section>
 
